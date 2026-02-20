@@ -1,73 +1,127 @@
-# React + TypeScript + Vite
+# August SDK Example App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A working example showing how to use `@augustdigital/sdk` to fetch and display Upshift vault data -- TVL, APY, historical charts, and deposit/withdrawal activity.
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Node.js 18+
+- [pnpm](https://pnpm.io/) (or npm/yarn)
 
-## React Compiler
+## API Keys
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+You need to provide your own keys via a `.env` file at the project root. Copy the template and fill in your values:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cp .env.example .env
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Required keys
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Variable | What it's for | How to get it |
+|---|---|---|
+| `VITE_ALCHEMY_API_KEY` | Ethereum RPC provider (read calls) | Sign up at [alchemy.com](https://www.alchemy.com/) -- **you must provide your own key** |
+| `VITE_AUGUST_API_KEY` | August API authentication | **Contact the August team** -- requires an August subaccount |
+| `VITE_SUBGRAPH_API_KEY` | The Graph subgraph queries | **Contact the August team** |
+| `VITE_GOLDSKY_API_KEY` | Goldsky subgraph for vault activity | **Contact the August team** -- we provide access to our subgraphs |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+> **Alchemy**: You are responsible for creating your own Alchemy account and API key. A free-tier key is sufficient for development.
+>
+> **August API key**: If you have an August subaccount with us and need an API key, reach out to the August team directly.
+>
+> **Goldsky API token**: If you need a Goldsky API token, ask the August team -- we will grant you access to the relevant subgraphs.
+
+### `.env` format
+
+```env
+VITE_ALCHEMY_API_KEY=your_alchemy_key
+VITE_AUGUST_API_KEY=your_august_key
+VITE_SUBGRAPH_API_KEY=your_subgraph_key
+VITE_GOLDSKY_API_KEY=your_goldsky_key
 ```
+
+## Install & Run
+
+```bash
+# Install dependencies (also builds the local SDK link)
+pnpm install
+
+# Start dev server
+pnpm dev
+```
+
+The app will be available at `http://localhost:5173`.
+
+## What the example demonstrates
+
+### SDK initialization (`src/sdk.ts`)
+
+```ts
+import AugustSDK from '@augustdigital/sdk';
+
+const sdk = new AugustSDK({
+  providers: {
+    1: `https://eth-mainnet.g.alchemy.com/v2/${YOUR_ALCHEMY_KEY}`,
+  },
+  keys: {
+    august: YOUR_AUGUST_API_KEY,
+    graph: YOUR_SUBGRAPH_API_KEY,
+  },
+});
+```
+
+The `providers` object maps chain IDs to RPC URLs. Chain `1` is Ethereum mainnet.
+
+### Fetching vault data
+
+```ts
+// Get vault metadata + snapshots
+const vault = await sdk.getVault({
+  vault: '0x80E1048eDE66ec4c364b4F22C8768fc657FF6A42',
+  options: { loadSnapshots: true },
+});
+
+// Get 90 days of historical timeseries (TVL, APY, share price)
+const timeseries = await sdk.getVaultHistoricalTimeseries({
+  vault: '0x80E1048eDE66ec4c364b4F22C8768fc657FF6A42',
+  nDays: 90,
+});
+```
+
+### Vault activity via Goldsky subgraph
+
+The app also queries on-chain deposit/withdrawal events directly from a Goldsky-hosted subgraph. See `src/sdk.ts` for the full implementation -- it resolves the subgraph URL from vault metadata, then runs GraphQL queries authenticated with your Goldsky bearer token.
+
+## Project structure
+
+```
+src/
+  sdk.ts              # SDK init + subgraph activity queries
+  App.tsx             # Main component, data fetching
+  components/
+    VaultHeader.tsx   # Vault name, logo, status
+    VaultStats.tsx    # TVL, APY, share price cards
+    VaultInfo.tsx     # Detailed metadata table
+    HistoricalChart.tsx  # Interactive 7/30/90-day charts
+    VaultActivity.tsx # Deposit/withdrawal activity table
+  utils/
+    format.ts         # Number/address formatting helpers
+```
+
+## Vite configuration notes
+
+The SDK is a CommonJS package. The Vite config includes polyfills and interop settings needed for it to work in a browser/ESM environment:
+
+- `global: 'globalThis'` -- polyfills the Node `global` reference
+- `buffer` alias -- polyfills the Node `buffer` module
+- `defaultIsModuleExports: true` -- handles CJS default export interop
+
+See `vite.config.ts` for the full configuration.
+
+## Available scripts
+
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start dev server with hot reload |
+| `pnpm build` | Type-check and build for production |
+| `pnpm preview` | Preview the production build locally |
+| `pnpm lint` | Run ESLint |
