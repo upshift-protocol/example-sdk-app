@@ -4,9 +4,11 @@ import { VaultHeader } from './components/VaultHeader';
 import { VaultStats } from './components/VaultStats';
 import { VaultInfo } from './components/VaultInfo';
 import { HistoricalChart } from './components/HistoricalChart';
+import { VaultActivity } from './components/VaultActivity';
 import { LoadingState } from './components/LoadingState';
 import { ErrorState } from './components/ErrorState';
-import { initSDK } from './sdk';
+import { initSDK, fetchVaultActivity } from './sdk';
+import type { IVaultActivityItem } from './sdk';
 import './App.css';
 
 // --- Configuration ---
@@ -17,6 +19,7 @@ function App() {
   const [vault, setVault] = useState<IVault | null>(null);
   const [timeseries, setTimeseries] =
     useState<IHistoricalTimeseriesResponse | null>(null);
+  const [activity, setActivity] = useState<IVaultActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +31,7 @@ function App() {
 
         const sdk = await initSDK();
 
-        // Fetch vault data and historical timeseries in parallel
+        // Fetch vault data and historical timeseries (critical)
         const [vaultData, timeseriesData] = await Promise.all([
           sdk.getVault({
             vault: VAULT_ADDRESS as `0x${string}`,
@@ -42,6 +45,11 @@ function App() {
 
         setVault(vaultData);
         setTimeseries(timeseriesData);
+
+        // Fetch activity separately so subgraph issues don't block the page
+        fetchVaultActivity(VAULT_ADDRESS)
+          .then(setActivity)
+          .catch((err) => console.warn('Activity fetch failed:', err));
       } catch (err) {
         console.error('Failed to fetch vault data:', err);
         setError(
@@ -70,6 +78,7 @@ function App() {
       <VaultStats vault={vault} />
       <VaultInfo vault={vault} />
       {timeseries && <HistoricalChart timeseries={timeseries} />}
+      <VaultActivity activity={activity} />
     </div>
   );
 }
