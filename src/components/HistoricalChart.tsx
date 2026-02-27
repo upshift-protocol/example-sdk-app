@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import type { IHistoricalTimeseriesResponse } from '@augustdigital/sdk';
 import {
   ResponsiveContainer,
@@ -35,6 +35,8 @@ export function HistoricalChart({
   const [metric, setMetric] = useState<Metric>('tvl');
   const [range, setRange] = useState<Range>(30);
 
+  const now = useRef(Date.now());
+
   const chartData = useMemo(() => {
     if (!timeseries?.data) return [];
 
@@ -50,7 +52,7 @@ export function HistoricalChart({
       .sort((a, b) => a.timestamp - b.timestamp);
 
     // Filter by range
-    const cutoff = Date.now() - range * 24 * 60 * 60 * 1000;
+    const cutoff = now.current - range * 24 * 60 * 60 * 1000;
     return entries.filter((d) => d.timestamp >= cutoff);
   }, [timeseries, metric, range]);
 
