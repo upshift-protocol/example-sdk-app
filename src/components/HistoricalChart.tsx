@@ -170,14 +170,14 @@ export function HistoricalChart({
                 color: 'var(--text-primary)',
                 fontSize: '0.8125rem',
               }}
-              labelFormatter={(d: string) =>
-                new Date(d).toLocaleDateString('en-US', {
+              labelFormatter={(d) =>
+                new Date(String(d)).toLocaleDateString('en-US', {
                   month: 'long',
                   day: 'numeric',
                   year: 'numeric',
                 })
               }
-              formatter={(value: number) => [config.format(value), config.label]}
+              formatter={(value) => [config.format(Number(value)), config.label]}
             />
             <Area
               type="monotone"
