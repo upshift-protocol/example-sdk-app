@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@augustdigital/sdk':
-        specifier: file:../js-sdk/packages/sdk
-        version: file:../js-sdk/packages/sdk(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)
+        specifier: ^4.24.6
+        version: 4.24.6(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)
       react:
         specifier: ^19.2.0
         version: 19.2.4
@@ -63,8 +63,8 @@ packages:
   '@adraffy/ens-normalize@1.10.1':
     resolution: {integrity: sha512-96Z2IP3mYmF1Xg2cDm8f1gWGf/HUVedQ3FMifV4kG/PQ4yEP51xDtRAEfhVNt5f/uzpNkZHwWQuUcu6D6K+Ekw==}
 
-  '@augustdigital/sdk@file:../js-sdk/packages/sdk':
-    resolution: {directory: ../js-sdk/packages/sdk, type: directory}
+  '@augustdigital/sdk@4.24.6':
+    resolution: {integrity: sha512-gq29i4ZYLu1LLDXoTttLcrMt8iUUwq4h8F437SgoflZLTem9MevXJAsyws46EfQ30dceiyEE6KY8s/HGQME7uw==}
     peerDependencies:
       viem: ^2.0.0
     peerDependenciesMeta:
@@ -1698,7 +1698,7 @@ snapshots:
 
   '@adraffy/ens-normalize@1.10.1': {}
 
-  '@augustdigital/sdk@file:../js-sdk/packages/sdk(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)':
+  '@augustdigital/sdk@4.24.6(bufferutil@4.1.0)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)':
     dependencies:
       '@coral-xyz/anchor': 0.31.1(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)
       '@sentry/browser': 8.55.0
