@@ -23,6 +23,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  //no-op
   useEffect(() => {
     async function fetchVaultData() {
       try {
