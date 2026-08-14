@@ -62,6 +62,7 @@ const sdk = new AugustSDK({
   providers: {
     1: `https://eth-mainnet.g.alchemy.com/v2/${YOUR_ALCHEMY_KEY}`,
   },
+  appName: 'example-app',
   keys: {
     august: YOUR_AUGUST_API_KEY,
     graph: YOUR_SUBGRAPH_API_KEY,

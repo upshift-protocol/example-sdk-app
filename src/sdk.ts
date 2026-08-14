@@ -18,6 +18,7 @@ export async function initSDK() {
     providers: {
       1: RPC_URL,
     },
+    appName: 'example-app',
     keys: {
       august: AUGUST_API_KEY,
       graph: SUBGRAPH_API_KEY,
