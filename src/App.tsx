@@ -12,8 +12,8 @@ import type { IVaultActivityItem } from './sdk';
 import './App.css';
 
 // --- Configuration ---
-// The Upshift USDC vault on Ethereum mainnet
-const VAULT_ADDRESS = '0x80E1048eDE66ec4c364b4F22C8768fc657FF6A42';
+// The Sentora USD vault on Ethereum mainnet
+const VAULT_ADDRESS = '0x74aD2F789Ed583DBd141bbdafC673fE1F033718b';
 
 function App() {
   const [vault, setVault] = useState<IVault | null>(null);
