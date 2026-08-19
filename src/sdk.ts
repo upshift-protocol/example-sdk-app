@@ -153,17 +153,16 @@ export async function fetchVaultActivity(
 
   // Parse deposits
   const deposits = (data.deposits ?? []) as Array<{
-    sender?: string;
-    owner?: string;
-    assets?: string;
+    senderAddr?: string;
+    assetIn?: string;
     timestamp_: string;
     transactionHash_: string;
   }>;
   for (const d of deposits) {
     activity.push({
       type: 'deposit',
-      address: d.sender || d.owner || '',
-      amount: formatAmount(d.assets || '0', decimals),
+      address: d.senderAddr || '',
+      amount: formatAmount(d.assetIn || '0', decimals),
       timestamp: Number(d.timestamp_),
       transactionHash: d.transactionHash_,
     });
