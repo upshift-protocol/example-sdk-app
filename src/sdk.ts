@@ -111,13 +111,13 @@ export async function fetchVaultActivity(
     `{
       deposits(first: 1000, orderBy: timestamp_, orderDirection: desc) {
         id
-        assets
+        assetIn
         transactionHash_
         timestamp_
         contractId_
-        sender
+        senderAddr
         shares
-        owner
+        amountIn
       }
       withdraws(first: 1000, orderBy: timestamp_, orderDirection: desc) {
         id
