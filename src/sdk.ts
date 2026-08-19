@@ -95,7 +95,7 @@ function formatAmount(raw: string, decimals = 6): string {
 
 export async function fetchVaultActivity(
   _vaultAddress: string,
-  vaultSymbol = 'upusdc',
+  vaultSymbol = 'sentUSD',
   decimals = 6,
 ): Promise<IVaultActivityItem[]> {
   // 1. Resolve subgraph URL from metadata
