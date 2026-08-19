@@ -131,9 +131,8 @@ export async function fetchVaultActivity(
       withdrawalRequesteds(first: 1000, orderBy: timestamp_, orderDirection: desc) {
         id
         shares
-        assets
         receiverAddr
-        ownerAddr
+        holderAddr
         timestamp_
         transactionHash_
         contractId_
@@ -189,17 +188,16 @@ export async function fetchVaultActivity(
   // Parse withdrawal requests
   const requests = (data.withdrawalRequesteds ?? []) as Array<{
     receiverAddr?: string;
-    ownerAddr?: string;
+    holderAddr?: string;
     shares?: string;
-    assets?: string;
     timestamp_: string;
     transactionHash_: string;
   }>;
   for (const r of requests) {
     activity.push({
       type: 'withdraw-request',
-      address: r.receiverAddr || r.ownerAddr || '',
-      amount: formatAmount(r.assets || r.shares || '0', decimals),
+      address: r.receiverAddr || r.holderAddr || '',
+      amount: formatAmount( r.shares || '0', decimals),
       timestamp: Number(r.timestamp_),
       transactionHash: r.transactionHash_,
     });
