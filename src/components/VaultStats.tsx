@@ -3,8 +3,8 @@ import { formatUsd, formatPercent } from '../utils/format';
 
 export function VaultStats({ vault }: { vault: IVault }) {
   const tvl = vault.latest_reported_tvl ?? parseFloat(vault.totalAssets?.normalized || '0');
-  const apy = vault.apy?.apy ?? 0;
-  const liquidApy = vault.apy?.liquidApy ?? 0;
+  const sevenDapy = vault.historical_apy?.['7']?? 0;
+  const thirtyDApy = vault.historical_apy?.['30'] ?? 0;
 
   // Share price = totalAssets / totalSupply
   const totalAssets = parseFloat(vault.totalAssets?.normalized || '0');
@@ -26,12 +26,12 @@ export function VaultStats({ vault }: { vault: IVault }) {
           <div className="stat-label">TVL</div>
         </div>
         <div>
-          <div className="stat-value green">{formatPercent(apy)}</div>
-          <div className="stat-label">Total APY</div>
+          <div className="stat-value green">{formatPercent(sevenDapy)}</div>
+          <div className="stat-label">7D APY</div>
         </div>
         <div>
-          <div className="stat-value green">{formatPercent(liquidApy)}</div>
-          <div className="stat-label">Liquid APY</div>
+          <div className="stat-value green">{formatPercent(thirtyDApy)}</div>
+          <div className="stat-label">30D APY</div>
         </div>
         <div>
           <div className="stat-value">
